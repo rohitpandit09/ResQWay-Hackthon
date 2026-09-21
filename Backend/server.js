@@ -1,7 +1,7 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-
+const {startSimulationMonitor} = require("./src/services/simulationMonitor");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -11,7 +11,12 @@ const dns = require("dns");
 
 // Routes
 const authRoutes = require("./src/routes/authRoutes");
-const locationRoutes = require("./src/routes/locationRoutes");
+const recordingRoutes = require("./src/routes/recordingRoutes");
+const aiRoutes = require("./src/routes/aiRoutes");
+const emergencyRoutes = require("./src/routes/emergencyRoutes");
+const simulationRoutes = require("./src/routes/simulationRoutes");
+
+
 
 // Database
 const { connectDB } = require("./src/config/db");
@@ -69,7 +74,10 @@ app.get("/", (req, res) => {
 */
 
 app.use("/api/auth", authRoutes);
-app.use("/api/location", locationRoutes);
+app.use("/api/recordings", recordingRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/emergencies",emergencyRoutes);
+app.use("/api/simulation",simulationRoutes);
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +103,8 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -135,6 +145,8 @@ io.on("connection", (socket) => {
     );
   });
 });
+
+startSimulationMonitor(io);
 
 /*
 |--------------------------------------------------------------------------

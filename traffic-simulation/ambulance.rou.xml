@@ -1,0 +1,27 @@
+<routes>
+
+    <vType
+        id="ambulance"
+        accel="3.0"
+        decel="5.0"
+        sigma="0.2"
+        length="7"
+        maxSpeed="13.9"
+        color="1,0,0"
+    />
+
+    <route
+        id="ambulanceRoute"
+        edges="A1A2 A2B2 B2C2 C2C3 C3D3"
+    />
+
+    <vehicle
+        id="ambulance1"
+        type="ambulance"
+        route="ambulanceRoute"
+        depart="10"
+        departLane="best"
+        departSpeed="max"
+    />
+
+</routes>

@@ -420,6 +420,86 @@ function registerCallSocket(io, socket) {
     }
   );
 
+
+  //=====================================================
+  // CALL RECORDING CONSENT
+  //=====================================================
+
+  socket.on(
+    "call:recording-consent",
+    async ({ callId, consent }) => {
+      try {
+        const activeCall = activeCalls.get(callId);
+
+        if (!activeCall) {
+          return socket.emit("call:error", {
+            message: "Call not found",
+          });
+        }
+
+        if (
+          String(activeCall.clientSocketId) !==
+          String(socket.id)
+        ) {
+          return socket.emit("call:error", {
+            message:
+              "Only the client can provide recording consent",
+          });
+        }
+
+        const Call = require("../models/Call");
+
+        const call = await Call.findOneAndUpdate(
+          {
+            _id: callId,
+            clientId: activeCall.clientId,
+          },
+          {
+            $set: {
+              recordingConsent: Boolean(consent),
+              recordingStatus: consent
+                ? "RECORDING"
+                : "NOT_STARTED",
+            },
+          },
+          {
+            new: true,
+          }
+        );
+
+        if (!call) {
+          return socket.emit("call:error", {
+            message: "Call not found",
+          });
+        }
+
+        socket.emit(
+          "call:recording-consent-updated",
+          {
+            callId,
+            consent: call.recordingConsent,
+            recordingStatus:
+              call.recordingStatus,
+          }
+        );
+
+        console.log(
+          `🎙️ Recording consent: ${callId} → ${call.recordingConsent}`
+        );
+      } catch (error) {
+        console.error(
+          "Recording consent error:",
+          error
+        );
+
+        socket.emit("call:error", {
+          message:
+            "Failed to update recording consent",
+        });
+      }
+    }
+  );
+
   // =====================================================
   // CALL CONNECTED
   // =====================================================

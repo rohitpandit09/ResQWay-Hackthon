@@ -84,6 +84,11 @@ client.on("call:accepted", (data) => {
   console.log(data);
 });
 
+client.emit("call:recording-consent", {
+  callId,
+  consent: true,
+});
+
 client.on("call:rejected", (data) => {
   console.log("\n❌ Client received rejection:");
   console.log(data);

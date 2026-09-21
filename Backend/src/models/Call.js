@@ -79,6 +79,52 @@ const callSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    aiStatus: {
+  type: String,
+  enum: [
+    "NOT_STARTED",
+    "PROCESSING",
+    "COMPLETED",
+    "FAILED",
+  ],
+  default: "NOT_STARTED",
+},
+
+transcript: {
+  type: String,
+  default: null,
+},
+
+emergencyDetected: {
+  type: Boolean,
+  default: false,
+},
+
+emergencyConfidence: {
+  type: Number,
+  default: null,
+},
+
+emergencyIntent: {
+  type: String,
+  default: null,
+},
+
+emergencyReason: {
+  type: String,
+  default: null,
+},
+
+analyzedAt: {
+  type: Date,
+  default: null,
+},
+
+aiError: {
+  type: String,
+  default: null,
+},
   },
   {
     timestamps: true,
